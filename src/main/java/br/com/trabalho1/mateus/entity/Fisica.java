@@ -11,7 +11,6 @@ import java.util.List;
 
 
 @Data
-@ToString(exclude = {"cpf", "rg"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -32,4 +31,8 @@ public class Fisica extends Pessoa {
         this.rg = rg;
     }
 
+    @Override
+    public String toString() {
+        return "FISICA";
+    }
 }
