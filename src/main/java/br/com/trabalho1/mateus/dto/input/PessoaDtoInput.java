@@ -1,4 +1,4 @@
-package br.com.trabalho1.mateus.dto;
+package br.com.trabalho1.mateus.dto.input;
 
 import lombok.Data;
 

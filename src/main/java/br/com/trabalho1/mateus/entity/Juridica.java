@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@ToString(exclude = "cnpj")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -28,4 +27,8 @@ public class Juridica extends Pessoa{
         this.cnpj = cnpj;
     }
 
+    @Override
+    public String toString() {
+        return "JURIDICA";
+    }
 }

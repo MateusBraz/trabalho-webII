@@ -1,6 +1,6 @@
 package br.com.trabalho1.mateus.service;
 
-import br.com.trabalho1.mateus.dto.PessoaDtoInput;
+import br.com.trabalho1.mateus.dto.input.PessoaDtoInput;
 import br.com.trabalho1.mateus.entity.Fisica;
 import br.com.trabalho1.mateus.entity.Juridica;
 import br.com.trabalho1.mateus.entity.Pessoa;
@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PessoaService {
@@ -31,6 +32,16 @@ public class PessoaService {
         return pessoaRepository.findAll();
     }
 
+    public List<Pessoa> buscarTodosLambda(Long idResponsavel, String nomeResponsavel, String tipo, String situacao) {
+        List<Pessoa> listaLambda = buscarTodos()
+                .stream()
+                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getId().equals(idResponsavel))
+                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getNome().equals(nomeResponsavel))
+                .filter(p ->  p.toString().equals(tipo))
+                .filter(p ->  p.getSituacao().toString().equals(situacao))
+                .collect(Collectors.toList());
+        return listaLambda;
+    }
 
     public Pessoa buscarPorId(Long id) {
         return pessoaRepository.findById(id).orElseThrow(() -> new RuntimeException("Pessoa com id " + id + ", não encontrado na base de dados"));
@@ -70,7 +81,7 @@ public class PessoaService {
 
     public Pessoa alterar(Long id, PessoaDtoInput pessoaDtoInput, String login, String senha) {
         Pessoa pessoaAlterar = buscarPorId(id);
-        String tipo = pessoaAlterar.toString().substring(0, pessoaAlterar.toString().length() - 2).toUpperCase();
+        String tipo = pessoaAlterar.toString();
         Integer idade = validar(id, tipo, pessoaDtoInput, login, senha);
         pessoaAlterar.setNome(pessoaDtoInput.getNome());
         pessoaAlterar.setApelido(pessoaDtoInput.getApelido());
@@ -91,6 +102,10 @@ public class PessoaService {
 
     public void deletar(Long id, String login, String senha) {
         validarUsuarioAdministrador(login, senha);
+        Pessoa pessoa = pessoaRepository.findByIdResponsavelAndId(id);
+        if(pessoa != null){
+            throw new IllegalArgumentException("Pessoa com id " + id + " é responsável por outra pessoa, não é possível excluir");
+        }
         pessoaRepository.deleteById(id);
     }
 

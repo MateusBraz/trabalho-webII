@@ -1,6 +1,6 @@
 package br.com.trabalho1.mateus.controller;
 
-import br.com.trabalho1.mateus.dto.PessoaDtoInput;
+import br.com.trabalho1.mateus.dto.input.PessoaDtoInput;
 import br.com.trabalho1.mateus.entity.Usuario;
 import br.com.trabalho1.mateus.repository.UsuarioRepository;
 import br.com.trabalho1.mateus.service.PessoaService;
@@ -23,10 +23,21 @@ public class PessoaController {
 
     @GetMapping
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
-                                         @RequestHeader("senha") String senha) {
+                                         @RequestHeader("senha") String senha,
+                                         @RequestParam(name = "idResponsavel", required = false) Long idResponsavel,
+                                         @RequestParam(name = "nomeResponsavel", required = false) String nomeResponsavel,
+                                         @RequestParam(name = "tipo", required = false) String tipo,
+                                         @RequestParam(name = "situacao", required = false) String situacao) {
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return new ResponseEntity(pessoaService.buscarTodos(), HttpStatus.OK);
+        return new ResponseEntity(pessoaService.buscarTodosLambda(idResponsavel, nomeResponsavel, tipo, situacao), HttpStatus.OK);
     }
+
+    //    @GetMapping
+//    public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
+//                                         @RequestHeader("senha") String senha) {
+//        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+//        return new ResponseEntity(pessoaService.buscarTodos(), HttpStatus.OK);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@RequestHeader("login") String login,

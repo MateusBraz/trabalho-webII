@@ -1,17 +1,18 @@
 package br.com.trabalho1.mateus.service;
 
-import br.com.trabalho1.mateus.dto.PedidoDtoInput;
-import br.com.trabalho1.mateus.entity.Pedido;
-import br.com.trabalho1.mateus.entity.Usuario;
+import br.com.trabalho1.mateus.dto.input.PedidoDtoInput;
+import br.com.trabalho1.mateus.entity.*;
 import br.com.trabalho1.mateus.enuns.EStatusPedido;
 import br.com.trabalho1.mateus.repository.PedidoRepository;
-import br.com.trabalho1.mateus.repository.PessoaRepository;
+import br.com.trabalho1.mateus.repository.ProdutoRepository;
 import br.com.trabalho1.mateus.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PedidoService {
@@ -21,7 +22,13 @@ public class PedidoService {
     PedidoRepository pedidoRepository;
 
     @Autowired
-    PessoaRepository pessoaRepository;
+    PessoaService pessoaService;
+
+    @Autowired
+    ProdutoService produtoService;
+
+    @Autowired
+    ProdutoRepository produtoRepository;
 
     @Autowired
     UsuarioRepository usuarioRepository;
@@ -38,16 +45,34 @@ public class PedidoService {
         validarUsuarioAdministrador(login, senha);
         validar(pedidoDtoInput);
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
-        Pedido pedido = Pedido.pedidoBuilder()
-                .id(null)
-                .pessoa(usuario.getPessoa())
-                .itemPedidoList(pedidoDtoInput.getItemPedidoList())
-                .status(EStatusPedido.REALIZADO)
-                .dataCompra(LocalDate.now())
-                .dataEntrega(pedidoDtoInput.getDataEntrega())
-                .percentualDesconto(pedidoDtoInput.getPercentualDesconto())
-                .build();
 
+        List<Produto> listProdutoAtualizar = new ArrayList<>();
+        Pessoa pessoa = pessoaService.buscarPorId(pedidoDtoInput.getIdPessoa());
+
+        Pedido pedido = new Pedido();
+        pedido.setPessoa(pessoa);
+        pedido.setStatus(EStatusPedido.REALIZADO);
+        pedido.setDataCompra(LocalDate.now());
+        pedido.setDataEntrega(pedidoDtoInput.getDataEntrega());
+        pedido.setPercentualDesconto(pedidoDtoInput.getPercentualDesconto());
+
+        List<ItemPedido> listItemPedido = pedidoDtoInput.getItemPedidoList()
+                .stream()
+                .map(itemPedidoDtoInput -> {
+                    Produto produto = produtoService.buscarPorIdProduto(itemPedidoDtoInput.getIdProduto());
+                    ItemPedido itemPedido = ItemPedido.itemPedidoBuilder()
+                            .pedido(pedido)
+                            .produto(produto)
+                            .quantidade(itemPedidoDtoInput.getQuantidade())
+                            .build();
+                    produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - itemPedidoDtoInput.getQuantidade());
+                    listProdutoAtualizar.add(produto);
+                    return itemPedido;
+                })
+                .collect(Collectors.toList());
+
+        pedido.setItemPedidoList(listItemPedido);
+        produtoRepository.saveAll(listProdutoAtualizar);
         return pedidoRepository.save(pedido);
     }
 

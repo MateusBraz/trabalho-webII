@@ -1,6 +1,6 @@
 package br.com.trabalho1.mateus.controller;
 
-import br.com.trabalho1.mateus.dto.ProdutoDtoOutput;
+import br.com.trabalho1.mateus.dto.output.ProdutoDtoOutput;
 import br.com.trabalho1.mateus.entity.Pessoa;
 import br.com.trabalho1.mateus.entity.Produto;
 import br.com.trabalho1.mateus.entity.Usuario;
@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -23,15 +24,29 @@ public class PodutoController {
     @Autowired
     UsuarioRepository usuarioRepository;
 
+
     @GetMapping
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
-                                         @RequestHeader("senha") String senha) {
+                                         @RequestHeader("senha") String senha,
+                                         @RequestParam(name = "descricao", required = false) String descricao,
+                                         @RequestParam(name = "precoMinimo", required = false) BigDecimal precoMinimo,
+                                         @RequestParam(name = "precoMaximo", required = false) BigDecimal precoMaximo) {
         Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
         Pessoa pessoa = usuario.getPessoa();
-        List<Produto> produtos = produtoService.buscarTodosDeAcordoComIdadePessoa(pessoa);
-        List<ProdutoDtoOutput> produtosDtoOutput = ProdutoDtoOutput.listFromProduto(produtos, pessoa);
+        List<ProdutoDtoOutput> produtosDtoOutput = produtoService.buscarTodosLambda(descricao, precoMinimo, precoMaximo, pessoa);
         return new ResponseEntity(produtosDtoOutput, HttpStatus.OK);
     }
+
+
+//    @GetMapping
+//    public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
+//                                         @RequestHeader("senha") String senha) {
+//        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+//        Pessoa pessoa = usuario.getPessoa();
+//        List<Produto> produtos = produtoService.buscarTodosDeAcordoComIdadePessoa(pessoa);
+//        List<ProdutoDtoOutput> produtosDtoOutput = ProdutoDtoOutput.listFromProduto(produtos, pessoa);
+//        return new ResponseEntity(produtosDtoOutput, HttpStatus.OK);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@RequestHeader("login") String login,

@@ -1,7 +1,8 @@
 package br.com.trabalho1.mateus.controller;
 
 
-import br.com.trabalho1.mateus.dto.PedidoDtoInput;
+import br.com.trabalho1.mateus.dto.input.PedidoDtoInput;
+import br.com.trabalho1.mateus.dto.output.PedidoDtoOutput;
 import br.com.trabalho1.mateus.entity.Pedido;
 import br.com.trabalho1.mateus.entity.Usuario;
 import br.com.trabalho1.mateus.repository.UsuarioRepository;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/pedido")
@@ -25,7 +28,8 @@ public class PedidoController {
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha) {
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return new ResponseEntity(pedidoService.buscarTodos(), HttpStatus.OK);
+        List<Pedido> pedidos = pedidoService.buscarTodos();
+        return new ResponseEntity(PedidoDtoOutput.listFromPedido(pedidos), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -33,14 +37,16 @@ public class PedidoController {
                                          @RequestHeader("senha") String senha,
                                          @PathVariable Long id) {
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return new ResponseEntity(pedidoService.buscarPorId(id), HttpStatus.OK);
+        Pedido pedido = pedidoService.buscarPorId(id);
+        return new ResponseEntity(new PedidoDtoOutput(pedido), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> inserir(@RequestHeader("login") String login,
                                      @RequestHeader("senha") String senha,
                                      @RequestBody PedidoDtoInput pedidoDtoInput) {
-        return new ResponseEntity(pedidoService.inserir(login, senha, pedidoDtoInput), HttpStatus.CREATED);
+        Pedido pedido = pedidoService.inserir(login, senha, pedidoDtoInput);
+        return new ResponseEntity(new PedidoDtoOutput(pedido), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -48,7 +54,8 @@ public class PedidoController {
                                      @RequestHeader("login") String login,
                                      @RequestHeader("senha") String senha,
                                      @RequestBody Pedido pedido) {
-        return new ResponseEntity(pedidoService.alterar(id, pedido, login, senha), HttpStatus.ACCEPTED);
+        Pedido pedidoAlterado = pedidoService.alterar(id, pedido, login, senha);
+        return new ResponseEntity(new PedidoDtoOutput(pedidoAlterado), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/{id}")

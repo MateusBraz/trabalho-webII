@@ -1,6 +1,4 @@
-package br.com.trabalho1.mateus.dto;
-
-import br.com.trabalho1.mateus.entity.ItemPedido;
+package br.com.trabalho1.mateus.dto.input;
 
 import lombok.Data;
 
@@ -16,7 +14,7 @@ public class PedidoDtoInput {
     private Long idPessoa;
 
     @NotNull(message = "Item pedidos não pode ser nulo")
-    private List<ItemPedido> itemPedidoList;
+    private List<ItemPedidoDtoInput> itemPedidoList;
 
     private String status;
 

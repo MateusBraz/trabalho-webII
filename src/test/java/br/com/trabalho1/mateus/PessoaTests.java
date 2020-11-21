@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 public class PessoaTests {
@@ -20,21 +21,99 @@ public class PessoaTests {
 
     @Test
     void salvar() {
-        Pessoa responsavel = pessoaRepository.findById(1L).orElseThrow(() -> new RuntimeException("Pessoa não encontrada na base de dados"));
-        Fisica pessoa = Fisica.fisicaBuilder()
+//        Pessoa responsavel = pessoaRepository.findById(1L).orElseThrow(() -> new RuntimeException("Pessoa não encontrada na base de dados"));
+        List<Pessoa> list = new ArrayList<>();
+        Fisica pessoa1 = Fisica.fisicaBuilder()
                 .id(null)
                 .pedidos(new ArrayList<>())
                 .usuario(null)
-                .idResponsavel(responsavel)
+                .idResponsavel(null)
                 .situacao(ESituacaoPessoa.ATIVO)
-                .nome("José menor")
-                .apelido("menor")
-                .dataNascimento(LocalDate.of(2007, 06, 23))
-                .cpf("123.456.789-19")
-                .rg("123456789")
+                .nome("Mateus Silva")
+                .apelido("silva")
+                .dataNascimento(LocalDate.of(1996, 06, 23))
+                .cpf("123.156.759-19")
+                .rg("129")
                 .build();
 
-        pessoaRepository.save(pessoa);
+        list.add(pessoa1);
+
+        Fisica pessoa2 = Fisica.fisicaBuilder()
+                .id(null)
+                .pedidos(new ArrayList<>())
+                .usuario(null)
+                .idResponsavel(pessoa1)
+                .situacao(ESituacaoPessoa.ATIVO)
+                .nome("Marcos")
+                .apelido("marquin")
+                .dataNascimento(LocalDate.of(2012, 06, 23))
+                .cpf("000.156.789-19")
+                .rg("12654569")
+                .build();
+
+        list.add(pessoa2);
+
+        Fisica pessoa3 = Fisica.fisicaBuilder()
+                .id(null)
+                .pedidos(new ArrayList<>())
+                .usuario(null)
+                .idResponsavel(pessoa1)
+                .situacao(ESituacaoPessoa.ATIVO)
+                .nome("João")
+                .apelido("Joãzika")
+                .dataNascimento(LocalDate.of(2012, 06, 23))
+                .cpf("589.156.789-19")
+                .rg("17584569")
+                .build();
+
+        list.add(pessoa3);
+
+        Fisica pessoa4 = Fisica.fisicaBuilder()
+                .id(null)
+                .pedidos(new ArrayList<>())
+                .usuario(null)
+                .idResponsavel(pessoa1)
+                .situacao(ESituacaoPessoa.ATIVO)
+                .nome("Maria")
+                .apelido("mari")
+                .dataNascimento(LocalDate.of(2005, 06, 23))
+                .cpf("123.156.652-79")
+                .rg("125874")
+                .build();
+
+        list.add(pessoa4);
+
+        Fisica pessoa5 = Fisica.fisicaBuilder()
+                .id(null)
+                .pedidos(new ArrayList<>())
+                .usuario(null)
+                .idResponsavel(null)
+                .situacao(ESituacaoPessoa.ATIVO)
+                .nome("Fagner")
+                .apelido("Fag")
+                .dataNascimento(LocalDate.of(2008, 06, 23))
+                .cpf("123.164.789-19")
+                .rg("1234478")
+                .build();
+
+        list.add(pessoa5);
+
+        Fisica pessoa6 = Fisica.fisicaBuilder()
+                .id(null)
+                .pedidos(new ArrayList<>())
+                .usuario(null)
+                .idResponsavel(null)
+                .situacao(ESituacaoPessoa.ATIVO)
+                .nome("Jorge")
+                .apelido("Jorgin")
+                .dataNascimento(LocalDate.of(1996, 06, 23))
+                .cpf("123.056.762-19")
+                .rg("128289")
+                .build();
+
+        list.add(pessoa6);
+
+        pessoaRepository.saveAll(list);
     }
 
     @Test

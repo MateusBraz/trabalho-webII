@@ -1,6 +1,6 @@
 package br.com.trabalho1.mateus.service;
 
-import br.com.trabalho1.mateus.dto.UsuarioDtoInput;
+import br.com.trabalho1.mateus.dto.input.UsuarioDtoInput;
 import br.com.trabalho1.mateus.entity.Pessoa;
 import br.com.trabalho1.mateus.entity.Usuario;
 import br.com.trabalho1.mateus.repository.PessoaRepository;

@@ -1,5 +1,6 @@
 package br.com.trabalho1.mateus.service;
 
+import br.com.trabalho1.mateus.dto.output.ProdutoDtoOutput;
 import br.com.trabalho1.mateus.entity.Pessoa;
 import br.com.trabalho1.mateus.entity.Produto;
 import br.com.trabalho1.mateus.entity.Usuario;
@@ -8,9 +9,11 @@ import br.com.trabalho1.mateus.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService {
@@ -21,11 +24,25 @@ public class ProdutoService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
+    public Produto buscarPorIdProduto(Long id){
+        return produtoRepository.findById(id).orElseThrow(() -> new RuntimeException("Produto com id " + id + ", não encontrado na base de dados"));
+    }
 
     public List<Produto> buscarTodosDeAcordoComIdadePessoa(Pessoa pessoa) {
         LocalDate dataAtual = LocalDate.now();
         Period idade = Period.between(pessoa.getDataNascimento(), dataAtual);
         return produtoRepository.findByIdadePermitida(idade.getYears());
+    }
+
+    public List<ProdutoDtoOutput> buscarTodosLambda(String descricao, BigDecimal precoMinimo, BigDecimal precoMaximo, Pessoa pessoa) {
+        List<ProdutoDtoOutput> listaLambda = buscarTodosDeAcordoComIdadePessoa(pessoa)
+                .stream()
+                .map(p -> new ProdutoDtoOutput(p, pessoa))
+                .filter(p -> p.getDescricao().equals(descricao))
+                .filter(p -> p.getPrecoVenda().compareTo(precoMinimo) >=0)
+                .filter(p -> p.getPrecoVenda().compareTo(precoMaximo) <=0)
+                .collect(Collectors.toList());
+        return listaLambda;
     }
 
     public Produto buscarPorId(Long id, Pessoa pessoa) {

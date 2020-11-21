@@ -1,4 +1,4 @@
-package br.com.trabalho1.mateus.dto;
+package br.com.trabalho1.mateus.dto.output;
 
 import br.com.trabalho1.mateus.entity.Pessoa;
 import br.com.trabalho1.mateus.entity.Produto;
@@ -23,12 +23,12 @@ public class ProdutoDtoOutput {
         this.id = produto.getId();
         this.descricao = produto.getDescricao();
         this.quantidadeEstoque = produto.getQuantidadeEstoque();
-        this.precoVenda = getPrecoVenda(produto, pessoa);
+        this.precoVenda = setPrecoVenda(produto, pessoa);
     }
 
 
-    public BigDecimal getPrecoVenda(Produto produto, Pessoa pessoa) {
-        String tipo = pessoa.toString().substring(0, pessoa.toString().length() - 2).toUpperCase();
+    public BigDecimal setPrecoVenda(Produto produto, Pessoa pessoa) {
+        String tipo = pessoa.toString();
         if (tipo.equalsIgnoreCase("FISICA")) {
             return produto.getPrecoVendaFisica();
         } else {
