@@ -12,4 +12,6 @@ public class ItemPedidoDtoInput {
 
     private Integer quantidade;
 
+    private Long idPedido;
+
 }

@@ -32,12 +32,15 @@ public abstract class Pessoa {
     @Column(name = "PES_ID")
     private Long id;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "pessoa")
     private List<Pedido> pedidos;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "pessoa", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Usuario usuario;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "ID_RESPONSAVEL")
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")

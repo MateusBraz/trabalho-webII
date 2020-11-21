@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 @Data
 public class ItemPedidoDtoOutput {
 
+    private Long id;
     private String descricaoProduto;
     private Integer quantidade;
 
     public ItemPedidoDtoOutput(ItemPedido itemPedido){
+        this.id = itemPedido.getId();
         this.descricaoProduto = itemPedido.getProduto().getDescricao();
         this.quantidade = itemPedido.getQuantidade();
     }

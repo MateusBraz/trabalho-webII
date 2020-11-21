@@ -147,12 +147,12 @@ public class PessoaTests {
 
     @Test
     void atualizarPessoa(){
-        Fisica fisica = (Fisica) pessoaRepository.findById(152L).orElseThrow(() -> new RuntimeException("Não encontrado"));
+        Fisica fisica = (Fisica) pessoaRepository.findById(102L).orElseThrow(() -> new RuntimeException("Não encontrado"));
         fisica.setNome("Menor alterado");
         fisica.setSituacao(ESituacaoPessoa.INATIVO);
         fisica.setCpf("32343445");
         fisica.setRg("2334424");
 
-        pessoaRepository.save(fisica);
+//        pessoaRepository.save(fisica);
     }
 }

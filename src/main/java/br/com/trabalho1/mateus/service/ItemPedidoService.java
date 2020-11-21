@@ -1,7 +1,13 @@
 package br.com.trabalho1.mateus.service;
 
+import br.com.trabalho1.mateus.dto.input.ItemPedidoDtoInput;
 import br.com.trabalho1.mateus.entity.ItemPedido;
+import br.com.trabalho1.mateus.entity.Pedido;
+import br.com.trabalho1.mateus.entity.Produto;
+import br.com.trabalho1.mateus.entity.Usuario;
 import br.com.trabalho1.mateus.repository.ItemPedidoRepository;
+import br.com.trabalho1.mateus.repository.ProdutoRepository;
+import br.com.trabalho1.mateus.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,23 +19,60 @@ public class ItemPedidoService {
     @Autowired
     private ItemPedidoRepository itemPedidoRepository;
 
+    @Autowired
+    private PedidoService pedidoService;
+
+    @Autowired
+    private ProdutoService produtoService;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     public List<ItemPedido> buscarTodos() {
         return itemPedidoRepository.findAll();
     }
 
-    public Object buscarPorId(Long id) {
-        return itemPedidoRepository.findById(id);
+    public ItemPedido buscarPorId(Long id) {
+        return itemPedidoRepository.findById(id).orElseThrow(() -> new RuntimeException("Item pedido com id " + id + " não encontrado"));
     }
 
-    public ItemPedido salvar(ItemPedido itemPedido) {
+    public ItemPedido salvar(String login, String senha, ItemPedidoDtoInput itemPedidoDtoInput) {
+        validarUsuarioAdministrador(login, senha);
+        if(itemPedidoDtoInput.getIdPedido() == null){
+            throw new RuntimeException("Id do pedido não pode ser nulo");
+        }
+        Pedido pedido = pedidoService.buscarPorId(itemPedidoDtoInput.getIdPedido());
+        Produto produto = produtoService.buscarPorIdProduto(itemPedidoDtoInput.getIdProduto());
+        ItemPedido itemPedido = ItemPedido.itemPedidoBuilder()
+                .pedido(pedido)
+                .produto(produto)
+                .quantidade(itemPedidoDtoInput.getQuantidade())
+                .build();
+
+        produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - itemPedidoDtoInput.getQuantidade());
+        produtoRepository.save(produto);
+
         return itemPedidoRepository.save(itemPedido);
     }
 
-    public ItemPedido alterar(ItemPedido itemPedido) {
-        return itemPedidoRepository.save(itemPedido);
-    }
+//    public ItemPedido alterar(String login, String senha, Long id, ItemPedidoDtoInput itemPedidoDtoInput) {
+//        validarUsuarioAdministrador(login, senha);
+//        ItemPedido itemPedido = buscarPorId(id);
+//
+//        return itemPedidoRepository.save(itemPedido);
+//    }
 
     public void deletar(Long id) {
         itemPedidoRepository.deleteById(id);
+    }
+
+    private void validarUsuarioAdministrador(String login, String senha) {
+        Usuario usuarioAutenticado = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário com login " + login + ", não encontrado na base de dados"));
+        if (!usuarioAutenticado.getIsAdministrador()) {
+            throw new RuntimeException("Usuário não tem permissão para fazer essa operação");
+        }
     }
 }
