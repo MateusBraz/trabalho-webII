@@ -15,7 +15,7 @@ public class ProdutoDtoOutput {
 
     private String descricao;
 
-    private Long quantidadeEstoque;
+    private Integer quantidadeEstoque;
 
     private BigDecimal precoVenda;
 

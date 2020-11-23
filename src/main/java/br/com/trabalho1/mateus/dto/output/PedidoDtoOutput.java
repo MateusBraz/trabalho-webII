@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class PedidoDtoOutput {
 
     private Long id;
+    private Long idPessoa;
     private String pessoaNome;
     private EStatusPedido status;
     private LocalDate dataCompra;
@@ -22,6 +23,7 @@ public class PedidoDtoOutput {
 
     public PedidoDtoOutput(Pedido pedido) {
         this.id = pedido.getId();
+        this.idPessoa = pedido.getPessoa().getId();
         this.pessoaNome = pedido.getPessoa().getNome();
         this.status = pedido.getStatus();
         this.dataCompra = pedido.getDataCompra();

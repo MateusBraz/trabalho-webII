@@ -1,6 +1,7 @@
 package br.com.trabalho1.mateus.controller;
 
 import br.com.trabalho1.mateus.dto.input.UsuarioDtoInput;
+import br.com.trabalho1.mateus.dto.output.UsuarioAutenticadoDtoOutput;
 import br.com.trabalho1.mateus.dto.output.UsuarioDtoOutput;
 import br.com.trabalho1.mateus.entity.Usuario;
 import br.com.trabalho1.mateus.repository.UsuarioRepository;
@@ -22,6 +23,14 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+
+    @GetMapping("/autenticar")
+    public ResponseEntity<?> autenticar(@RequestHeader("login") String login,
+                                         @RequestHeader("senha") String senha) {
+        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return new ResponseEntity(new UsuarioAutenticadoDtoOutput(usuario), HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,

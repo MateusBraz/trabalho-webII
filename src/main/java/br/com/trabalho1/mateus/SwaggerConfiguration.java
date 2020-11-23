@@ -14,7 +14,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Configuration
 public class SwaggerConfiguration {
-    //    http://localhost:8081/swagger-ui.html#/
+
+    //    link para acessar o swagger http://localhost:8081/swagger-ui.html#/
+
     @Bean
     public Docket api() {
         Contact contato = new Contact("Mateus Braz", "https://www.linkedin.com/in/mateus-braz-348b1116a/", "mateus.braz@ufms.com.br");

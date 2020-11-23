@@ -25,7 +25,7 @@ public class Produto {
     private String descricao;
 
     @Column(name = "PRO_QUANTIDADEESTOQUE")
-    private Long quantidadeEstoque;
+    private Integer quantidadeEstoque;
 
     @Column(name = "PRO_IDADEPERMITIDA")
     private Integer idadePermitida;

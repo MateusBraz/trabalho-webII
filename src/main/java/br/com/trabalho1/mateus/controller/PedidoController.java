@@ -50,11 +50,10 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> alterar(@PathVariable Long id,
+    public ResponseEntity<?> cancelar(@PathVariable Long id,
                                      @RequestHeader("login") String login,
-                                     @RequestHeader("senha") String senha,
-                                     @RequestBody Pedido pedido) {
-        Pedido pedidoAlterado = pedidoService.alterar(id, pedido, login, senha);
+                                     @RequestHeader("senha") String senha) {
+        Pedido pedidoAlterado = pedidoService.cancelar(id, login, senha);
         return new ResponseEntity(new PedidoDtoOutput(pedidoAlterado), HttpStatus.ACCEPTED);
     }
 

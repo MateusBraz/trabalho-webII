@@ -47,10 +47,9 @@ public class PedidoService {
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
 
         List<Produto> listProdutoAtualizar = new ArrayList<>();
-        Pessoa pessoa = pessoaService.buscarPorId(pedidoDtoInput.getIdPessoa());
 
         Pedido pedido = new Pedido();
-        pedido.setPessoa(pessoa);
+        pedido.setPessoa(usuario.getPessoa());
         pedido.setStatus(EStatusPedido.REALIZADO);
         pedido.setDataCompra(LocalDate.now());
         pedido.setDataEntrega(pedidoDtoInput.getDataEntrega());
@@ -76,7 +75,18 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    public Pedido alterar(Long id, Pedido pedido, String login, String senha) {
+    public Pedido cancelar(Long id, String login, String senha) {
+        validarUsuarioAdministrador(login, senha);
+        Pedido pedido = buscarPorId(id);
+        List<ItemPedido> listItemPedido = pedido.getItemPedidoList();
+        List<Produto> listProdutoAtualizar = new ArrayList<>();
+        listItemPedido.forEach(itemPedido -> {
+            Produto produto = itemPedido.getProduto();
+            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + itemPedido.getQuantidade());
+            listProdutoAtualizar.add(produto);
+        });
+        produtoRepository.saveAll(listProdutoAtualizar);
+        pedido.setStatus(EStatusPedido.CANCELADO);
         return pedidoRepository.save(pedido);
     }
 

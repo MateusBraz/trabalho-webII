@@ -10,9 +10,6 @@ import java.util.List;
 @Data
 public class PedidoDtoInput {
 
-    @NotNull(message = "Id da pessoa não pode ser nulo")
-    private Long idPessoa;
-
     @NotNull(message = "Item pedidos não pode ser nulo")
     private List<ItemPedidoDtoInput> itemPedidoList;
 

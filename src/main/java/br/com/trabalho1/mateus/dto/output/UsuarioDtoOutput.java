@@ -1,6 +1,5 @@
 package br.com.trabalho1.mateus.dto.output;
 
-import br.com.trabalho1.mateus.entity.Pessoa;
 import br.com.trabalho1.mateus.entity.Usuario;
 import lombok.Data;
 
@@ -12,16 +11,16 @@ public class UsuarioDtoOutput {
 
     private Long id;
     private String login;
-    private String senha;
     private Boolean isAdministrador;
-    private PessoaDtoOutput pessoa;
+    private Long pessoaId;
+    private String pessoaNome;
 
-    public UsuarioDtoOutput(Usuario usuario) {
+    public UsuarioDtoOutput(Usuario usuario){
         this.id = usuario.getId();
         this.login = usuario.getLogin();
-        this.senha = usuario.getSenha();
         this.isAdministrador = usuario.getIsAdministrador();
-        this.pessoa = new PessoaDtoOutput(usuario.getPessoa());
+        this.pessoaId = usuario.getPessoa().getId();
+        this.pessoaNome = usuario.getPessoa().getNome();
     }
 
     public static List<UsuarioDtoOutput> listFromUsuario(List<Usuario> list) {
