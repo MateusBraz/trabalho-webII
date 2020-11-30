@@ -21,6 +21,8 @@ public class Juridica extends Pessoa{
     @Column(name = "PES_CNPJ", unique = true, nullable = true)
     private String cnpj;
 
+    private final String tipo = "JURIDICA";
+
     @Builder(builderMethodName = "juridicaBuilder")
     public Juridica(Long id, List<Pedido> pedidos, Usuario usuario, Pessoa idResponsavel, ESituacaoPessoa situacao, String nome, String apelido, LocalDate dataNascimento, String cnpj) {
         super(id, pedidos, usuario, idResponsavel, situacao, nome, apelido, dataNascimento);

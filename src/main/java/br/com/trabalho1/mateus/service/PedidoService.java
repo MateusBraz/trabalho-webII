@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @Service
 public class PedidoService {
 
+    @Autowired
+    AutenticacaoService autenticacaoService;
 
     @Autowired
     PedidoRepository pedidoRepository;
@@ -42,7 +44,7 @@ public class PedidoService {
     }
 
     public Pedido inserir(String login, String senha, PedidoDtoInput pedidoDtoInput) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         validar(pedidoDtoInput);
         Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
 
@@ -76,7 +78,7 @@ public class PedidoService {
     }
 
     public Pedido cancelar(Long id, String login, String senha) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         Pedido pedido = buscarPorId(id);
         List<ItemPedido> listItemPedido = pedido.getItemPedidoList();
         List<Produto> listProdutoAtualizar = new ArrayList<>();
@@ -96,15 +98,9 @@ public class PedidoService {
         }
     }
 
-    private void validarUsuarioAdministrador(String login, String senha) {
-        Usuario usuarioAutenticado = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário com login " + login + ", não encontrado na base de dados"));
-        if (!usuarioAutenticado.getIsAdministrador()) {
-            throw new RuntimeException("Usuário não tem permissão para fazer essa operação");
-        }
-    }
 
     public void deletar(Long id, String login, String senha) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         pedidoRepository.deleteById(id);
     }
 }

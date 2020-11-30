@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 public class PessoaService {
 
     @Autowired
-    private PessoaRepository pessoaRepository;
+    private AutenticacaoService autenticacaoService;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private PessoaRepository pessoaRepository;
 
     Pessoa responsavel;
 
@@ -33,14 +33,15 @@ public class PessoaService {
     }
 
     public List<Pessoa> buscarTodosLambda(Long idResponsavel, String nomeResponsavel, String tipo, String situacao) {
-        List<Pessoa> listaLambda = buscarTodos()
-                .stream()
-                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getId().equals(idResponsavel))
-                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getNome().equals(nomeResponsavel))
-                .filter(p ->  p.toString().equals(tipo))
-                .filter(p ->  p.getSituacao().toString().equals(situacao))
-                .collect(Collectors.toList());
-        return listaLambda;
+//        List<Pessoa> listaLambda = buscarTodos()
+//                .stream()
+//                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getId().equals(idResponsavel))
+//                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getNome().equals(nomeResponsavel))
+//                .filter(p ->  p.toString().equals(tipo))
+//                .filter(p ->  p.getSituacao().toString().equals(situacao))
+//                .collect(Collectors.toList());
+//        return listaLambda;
+        return buscarTodos();
     }
 
     public Pessoa buscarPorId(Long id) {
@@ -101,16 +102,16 @@ public class PessoaService {
     }
 
     public void deletar(Long id, String login, String senha) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         Pessoa pessoa = pessoaRepository.findByIdResponsavelAndId(id);
-        if(pessoa != null){
+        if (pessoa != null) {
             throw new IllegalArgumentException("Pessoa com id " + id + " é responsável por outra pessoa, não é possível excluir");
         }
         pessoaRepository.deleteById(id);
     }
 
     private Integer validar(Long id, String tipo, PessoaDtoInput pessoaDtoInput, String login, String senha) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         LocalDate dataAtual = LocalDate.now();
         Period idade = Period.between(pessoaDtoInput.getDataNascimento(), dataAtual);
 
@@ -170,10 +171,4 @@ public class PessoaService {
         return idade.getYears();
     }
 
-    private void validarUsuarioAdministrador(String login, String senha) {
-        Usuario usuarioAutenticado = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário com login " + login + ", não encontrado na base de dados"));
-        if (!usuarioAutenticado.getIsAdministrador()) {
-            throw new RuntimeException("Usuário não tem permissão para fazer essa operação");
-        }
-    }
 }

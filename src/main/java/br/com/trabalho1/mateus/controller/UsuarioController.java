@@ -28,14 +28,20 @@ public class UsuarioController {
     @GetMapping("/autenticar")
     public ResponseEntity<?> autenticar(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha) {
-        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
         return new ResponseEntity(new UsuarioAutenticadoDtoOutput(usuario), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha) {
-        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
         List<Usuario> usuarios = usuarioService.buscarTodos();
         return new ResponseEntity(UsuarioDtoOutput.listFromUsuario(usuarios), HttpStatus.OK);
     }
@@ -44,7 +50,10 @@ public class UsuarioController {
     public ResponseEntity<?> buscarPorId(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha,
                                          @PathVariable Long id) {
-        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
         Usuario usuarioBusca = usuarioService.buscarPorId(id);
         return new ResponseEntity(new UsuarioDtoOutput(usuarioBusca), HttpStatus.OK);
     }

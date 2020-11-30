@@ -31,7 +31,10 @@ public class PodutoController {
                                          @RequestParam(name = "descricao", required = false) String descricao,
                                          @RequestParam(name = "precoMinimo", required = false) BigDecimal precoMinimo,
                                          @RequestParam(name = "precoMaximo", required = false) BigDecimal precoMaximo) {
-        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
         Pessoa pessoa = usuario.getPessoa();
         List<ProdutoDtoOutput> produtosDtoOutput = produtoService.buscarTodosLambda(descricao, precoMinimo, precoMaximo, pessoa);
         return new ResponseEntity(produtosDtoOutput, HttpStatus.OK);
@@ -52,7 +55,10 @@ public class PodutoController {
     public ResponseEntity<?> buscarPorId(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha,
                                          @PathVariable Long id) {
-        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
         Pessoa pessoa = usuario.getPessoa();
         Produto produto = produtoService.buscarPorId(id, pessoa);
         return new ResponseEntity(new ProdutoDtoOutput(produto, pessoa), HttpStatus.OK);

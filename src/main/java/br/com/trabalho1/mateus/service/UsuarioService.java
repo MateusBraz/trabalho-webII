@@ -14,10 +14,13 @@ import java.util.List;
 public class UsuarioService {
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private AutenticacaoService autenticacaoService;
 
     @Autowired
-    PessoaRepository pessoaRepository;
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PessoaRepository pessoaRepository;
 
     public List<Usuario> buscarTodos() {
         return usuarioRepository.findAll();
@@ -42,12 +45,12 @@ public class UsuarioService {
     }
 
     public void deletar(Long id, String login, String senha) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         usuarioRepository.deleteById(id);
     }
 
     private Pessoa validarSalvar(String login, String senha, UsuarioDtoInput dtoInput) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
 
         if (dtoInput.getIdPessoa() == null) {
             throw new RuntimeException("Informe o id da Pessoa para o cadastro de usuário");
@@ -67,7 +70,7 @@ public class UsuarioService {
     }
 
     private Usuario validarAlterar(Long id, String login, String senha, UsuarioDtoInput dtoInput) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
 
         Usuario usuario = buscarPorId(id);
 
@@ -78,10 +81,4 @@ public class UsuarioService {
         return usuario;
     }
 
-    private void validarUsuarioAdministrador(String login, String senha) {
-        Usuario usuarioAutenticado = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário com login " + login + ", não encontrado na base de dados"));
-        if (!usuarioAutenticado.getIsAdministrador()) {
-            throw new RuntimeException("Usuário não tem permissão para fazer essa operação");
-        }
-    }
 }

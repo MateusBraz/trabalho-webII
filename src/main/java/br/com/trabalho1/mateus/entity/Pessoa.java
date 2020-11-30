@@ -60,33 +60,4 @@ public abstract class Pessoa {
     @Column(name = "PES_DATANASCIMENTO")
     private LocalDate dataNascimento;
 
-//    @Transient
-//    private PersistentAttributeInterceptor persistentAttributeInterceptor;
-//
-//    @Override
-//    public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
-//        return persistentAttributeInterceptor;
-//    }
-//
-//    @Override
-//    public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
-//        this.persistentAttributeInterceptor = persistentAttributeInterceptor;
-//    }
-//
-//    public Usuario getUsuario() {
-//        if (this.persistentAttributeInterceptor != null) {
-//            return (Usuario) this.persistentAttributeInterceptor.readObject(
-//                    this, "usuario", this.usuario);
-//        }
-//        return this.usuario;
-//    }
-//
-//    public void setUsuario(Usuario usuario) {
-//        if (this.persistentAttributeInterceptor != null) {
-//            this.usuario = (Usuario) persistentAttributeInterceptor.writeObject(
-//                    this, "usuario", this.usuario, usuario);
-//        } else {
-//            this.usuario = usuario;
-//        }
-//    }
 }

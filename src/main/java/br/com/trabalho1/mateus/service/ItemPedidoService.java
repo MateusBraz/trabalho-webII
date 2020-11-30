@@ -17,6 +17,9 @@ import java.util.List;
 public class ItemPedidoService {
 
     @Autowired
+    private AutenticacaoService autenticacaoService;
+
+    @Autowired
     private ItemPedidoRepository itemPedidoRepository;
 
     @Autowired
@@ -40,7 +43,7 @@ public class ItemPedidoService {
     }
 
     public ItemPedido salvar(String login, String senha, ItemPedidoDtoInput itemPedidoDtoInput) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         if(itemPedidoDtoInput.getIdPedido() == null){
             throw new RuntimeException("Id do pedido não pode ser nulo");
         }
@@ -69,10 +72,4 @@ public class ItemPedidoService {
         itemPedidoRepository.deleteById(id);
     }
 
-    private void validarUsuarioAdministrador(String login, String senha) {
-        Usuario usuarioAutenticado = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário com login " + login + ", não encontrado na base de dados"));
-        if (!usuarioAutenticado.getIsAdministrador()) {
-            throw new RuntimeException("Usuário não tem permissão para fazer essa operação");
-        }
-    }
 }

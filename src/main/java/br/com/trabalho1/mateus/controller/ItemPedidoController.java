@@ -28,7 +28,10 @@ public class ItemPedidoController {
     @ResponseBody
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha) {
-        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
         List<ItemPedido> itemPedidoList = itemPedidoService.buscarTodos();
         return new ResponseEntity(ItemPedidoDtoOutput.listFromItemPedido(itemPedidoList), HttpStatus.OK);
     }
@@ -38,7 +41,10 @@ public class ItemPedidoController {
     public ResponseEntity<?> buscarPorId(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha,
                                          @PathVariable("id") Long id) {
-        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
         ItemPedido itemPedido = itemPedidoService.buscarPorId(id);
         return new ResponseEntity(new ItemPedidoDtoOutput(itemPedido), HttpStatus.OK);
     }

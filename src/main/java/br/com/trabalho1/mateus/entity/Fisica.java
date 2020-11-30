@@ -24,6 +24,8 @@ public class Fisica extends Pessoa {
     @Column(name = "PES_RG", unique = true, nullable = true)
     private String rg;
 
+    private final String tipo = "FISICA";
+
     @Builder(builderMethodName = "fisicaBuilder")
     public Fisica(Long id, List<Pedido> pedidos, Usuario usuario, Pessoa idResponsavel, ESituacaoPessoa situacao, String nome, String apelido, LocalDate dataNascimento, String cpf, String rg) {
         super(id, pedidos, usuario, idResponsavel, situacao, nome, apelido, dataNascimento);

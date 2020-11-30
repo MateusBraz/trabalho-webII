@@ -19,12 +19,13 @@ import java.util.stream.Collectors;
 public class ProdutoService {
 
     @Autowired
-    ProdutoRepository produtoRepository;
+    private AutenticacaoService autenticacaoService;
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private ProdutoRepository produtoRepository;
 
-    public Produto buscarPorIdProduto(Long id){
+
+    public Produto buscarPorIdProduto(Long id) {
         return produtoRepository.findById(id).orElseThrow(() -> new RuntimeException("Produto com id " + id + ", não encontrado na base de dados"));
     }
 
@@ -35,14 +36,15 @@ public class ProdutoService {
     }
 
     public List<ProdutoDtoOutput> buscarTodosLambda(String descricao, BigDecimal precoMinimo, BigDecimal precoMaximo, Pessoa pessoa) {
-        List<ProdutoDtoOutput> listaLambda = buscarTodosDeAcordoComIdadePessoa(pessoa)
-                .stream()
-                .map(p -> new ProdutoDtoOutput(p, pessoa))
-                .filter(p -> p.getDescricao().equals(descricao))
-                .filter(p -> p.getPrecoVenda().compareTo(precoMinimo) >=0)
-                .filter(p -> p.getPrecoVenda().compareTo(precoMaximo) <=0)
-                .collect(Collectors.toList());
-        return listaLambda;
+//        List<ProdutoDtoOutput> listaLambda = buscarTodosDeAcordoComIdadePessoa(pessoa)
+//                .stream()
+//                .map(p -> new ProdutoDtoOutput(p, pessoa))
+//                .filter(p -> p.getDescricao().equals(descricao))
+//                .filter(p -> p.getPrecoVenda().compareTo(precoMinimo) >=0)
+//                .filter(p -> p.getPrecoVenda().compareTo(precoMaximo) <=0)
+//                .collect(Collectors.toList());
+//        return listaLambda;
+        return ProdutoDtoOutput.listFromProduto(buscarTodosDeAcordoComIdadePessoa(pessoa), pessoa);
     }
 
     public Produto buscarPorId(Long id, Pessoa pessoa) {
@@ -56,12 +58,12 @@ public class ProdutoService {
     }
 
     public Produto inserir(String login, String senha, Produto produto) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         return produtoRepository.save(produto);
     }
 
     public Produto alterar(Long id, String login, String senha, Produto produto) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         Produto produtoAlterar = produtoRepository.findById(id).orElseThrow(() -> new RuntimeException("Produto com id " + id + ", não encontrado na base de dados"));
         produtoAlterar.setDescricao(produto.getDescricao());
         produtoAlterar.setQuantidadeEstoque(produto.getQuantidadeEstoque());
@@ -73,15 +75,8 @@ public class ProdutoService {
     }
 
     public void deletar(Long id, String login, String senha) {
-        validarUsuarioAdministrador(login, senha);
+        autenticacaoService.validarUsuarioAdministrador(login, senha);
         produtoRepository.deleteById(id);
-    }
-
-    private void validarUsuarioAdministrador(String login, String senha) {
-        Usuario usuarioAutenticado = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário com login " + login + ", não encontrado na base de dados"));
-        if (!usuarioAutenticado.getIsAdministrador()) {
-            throw new RuntimeException("Usuário não tem permissão para fazer essa operação");
-        }
     }
 
 }
