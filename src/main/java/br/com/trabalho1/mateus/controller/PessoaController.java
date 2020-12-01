@@ -22,8 +22,15 @@ public class PessoaController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/buscarTodos")
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
+                                         @RequestHeader("senha") String senha) {
+        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return new ResponseEntity(pessoaService.buscarTodos(), HttpStatus.OK);
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> buscarPessoas(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha,
                                          @RequestParam(name = "idResponsavel", required = false) Long idResponsavel,
                                          @RequestParam(name = "nomeResponsavel", required = false) String nomeResponsavel,
@@ -36,12 +43,6 @@ public class PessoaController {
         return new ResponseEntity(pessoaService.buscarTodosLambda(idResponsavel, nomeResponsavel, tipo, situacao), HttpStatus.OK);
     }
 
-    //    @GetMapping
-//    public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
-//                                         @RequestHeader("senha") String senha) {
-//        Usuario usuario = usuarioRepository.findByLoginAndSenha(login, senha).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-//        return new ResponseEntity(pessoaService.buscarTodos(), HttpStatus.OK);
-//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@RequestHeader("login") String login,
