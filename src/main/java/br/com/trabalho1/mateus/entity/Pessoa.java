@@ -28,6 +28,7 @@ import java.util.List;
 public abstract class Pessoa {
 
     @Id
+//    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_pessoa")
     @Column(name = "PES_ID")
     private Long id;
