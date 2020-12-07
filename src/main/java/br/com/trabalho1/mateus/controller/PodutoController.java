@@ -25,38 +25,37 @@ public class PodutoController {
     UsuarioRepository usuarioRepository;
 
 
-    @GetMapping
+    @GetMapping("/buscarTodos")
     public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
-                                         @RequestHeader("senha") String senha,
-                                         @RequestParam(name = "descricao", required = false) String descricao,
-                                         @RequestParam(name = "precoMinimo", required = false) BigDecimal precoMinimo,
-                                         @RequestParam(name = "precoMaximo", required = false) BigDecimal precoMaximo) {
-        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        if(!senha.equalsIgnoreCase(usuario.getSenha())){
-            throw new RuntimeException("Senha incorreta");
-        }
+                                         @RequestHeader("senha") String senha) {
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
         Pessoa pessoa = usuario.getPessoa();
-        List<ProdutoDtoOutput> produtosDtoOutput = produtoService.buscarTodosLambda(descricao, precoMinimo, precoMaximo, pessoa);
+        List<Produto> produtos = produtoService.buscarTodosDeAcordoComIdadePessoa(pessoa);
+        List<ProdutoDtoOutput> produtosDtoOutput = ProdutoDtoOutput.listFromProduto(produtos, pessoa);
         return new ResponseEntity(produtosDtoOutput, HttpStatus.OK);
     }
 
-
-//    @GetMapping
-//    public ResponseEntity<?> buscarTodos(@RequestHeader("login") String login,
-//                                         @RequestHeader("senha") String senha) {
-//        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
-//        Pessoa pessoa = usuario.getPessoa();
-//        List<Produto> produtos = produtoService.buscarTodosDeAcordoComIdadePessoa(pessoa);
-//        List<ProdutoDtoOutput> produtosDtoOutput = ProdutoDtoOutput.listFromProduto(produtos, pessoa);
-//        return new ResponseEntity(produtosDtoOutput, HttpStatus.OK);
-//    }
+    @GetMapping
+    public ResponseEntity<?> buscarProdutos(@RequestHeader("login") String login,
+                                            @RequestHeader("senha") String senha,
+                                            @RequestParam(name = "descricao", required = false) String descricao,
+                                            @RequestParam(name = "precoMinimo", required = false) BigDecimal precoMinimo,
+                                            @RequestParam(name = "precoMaximo", required = false) BigDecimal precoMaximo) {
+        Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if (!senha.equalsIgnoreCase(usuario.getSenha())) {
+            throw new RuntimeException("Senha incorreta");
+        }
+        Pessoa pessoa = usuario.getPessoa();
+        List<ProdutoDtoOutput> produtos = produtoService.buscarTodosLambda(descricao, precoMinimo, precoMaximo, pessoa);
+        return new ResponseEntity(produtos, HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@RequestHeader("login") String login,
                                          @RequestHeader("senha") String senha,
                                          @PathVariable Long id) {
         Usuario usuario = usuarioRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        if(!senha.equalsIgnoreCase(usuario.getSenha())){
+        if (!senha.equalsIgnoreCase(usuario.getSenha())) {
             throw new RuntimeException("Senha incorreta");
         }
         Pessoa pessoa = usuario.getPessoa();

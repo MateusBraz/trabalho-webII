@@ -32,16 +32,26 @@ public class PessoaService {
         return pessoaRepository.findAll();
     }
 
-    public List<Pessoa> buscarTodosLambda(Long idResponsavel, String nomeResponsavel, String tipo, String situacao) {
+//    public List<Pessoa> buscarTodosLambda(Long idResponsavel, String nomeResponsavel, String tipo, String situacao) {
 //        List<Pessoa> listaLambda = buscarTodos()
 //                .stream()
-//                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getId().equals(idResponsavel))
-//                .filter(p ->  p.getIdResponsavel() != null && p.getIdResponsavel().getNome().equals(nomeResponsavel))
-//                .filter(p ->  p.toString().equals(tipo))
-//                .filter(p ->  p.getSituacao().toString().equals(situacao))
+//                .filter(p -> p.getIdResponsavel() != null && p.getIdResponsavel().getId().equals(idResponsavel))
+//                .filter(p -> p.getIdResponsavel() != null && p.getIdResponsavel().getNome().equals(nomeResponsavel))
+//                .filter(p -> p.toString().equals(tipo))
+//                .filter(p -> p.getSituacao().toString().equals(situacao))
 //                .collect(Collectors.toList());
+//
 //        return listaLambda;
-        return buscarTodos();
+//    }
+
+    public List<Pessoa> buscarTodosLambda(Long idResponsavel, String nomeResponsavel, String tipo, String situacao) {
+        List<Pessoa> listaLambda = buscarTodos()
+                .stream()
+                .filter(p -> p.toString().equals(tipo))
+                .filter(p -> p.getSituacao().toString().equals(situacao))
+                .collect(Collectors.toList());
+
+        return listaLambda;
     }
 
     public Pessoa buscarPorId(Long id) {

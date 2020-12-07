@@ -19,11 +19,24 @@ public class ProdutoDtoOutput {
 
     private BigDecimal precoVenda;
 
+    private Integer idadePermitida;
+
+    private BigDecimal precoCompra;
+
+    private BigDecimal precoVendaFisica;
+
+    private BigDecimal precoVendaJuridica;
+
+
     public ProdutoDtoOutput(Produto produto, Pessoa pessoa) {
         this.id = produto.getId();
         this.descricao = produto.getDescricao();
         this.quantidadeEstoque = produto.getQuantidadeEstoque();
         this.precoVenda = setPrecoVenda(produto, pessoa);
+        this.idadePermitida = produto.getIdadePermitida();
+        this.precoCompra = produto.getPrecoCompra();
+        this.precoVendaFisica = produto.getPrecoVendaFisica();
+        this.precoVendaJuridica = produto.getPrecoVendaJuridica();
     }
 
 

@@ -61,6 +61,9 @@ public class PedidoService {
                 .stream()
                 .map(itemPedidoDtoInput -> {
                     Produto produto = produtoService.buscarPorIdProduto(itemPedidoDtoInput.getIdProduto());
+                    if (itemPedidoDtoInput.getQuantidade() > produto.getQuantidadeEstoque()) {
+                        throw new RuntimeException("Quantidade no estoque do produto " + produto.getDescricao() + " inferior a quantidade do pedido");
+                    }
                     ItemPedido itemPedido = ItemPedido.itemPedidoBuilder()
                             .pedido(pedido)
                             .produto(produto)

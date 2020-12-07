@@ -35,16 +35,25 @@ public class ProdutoService {
         return produtoRepository.findByIdadePermitida(idade.getYears());
     }
 
-    public List<ProdutoDtoOutput> buscarTodosLambda(String descricao, BigDecimal precoMinimo, BigDecimal precoMaximo, Pessoa pessoa) {
+//    public List<ProdutoDtoOutput> buscarTodosLambda(String descricao, BigDecimal precoMinimo, BigDecimal precoMaximo, Pessoa pessoa) {
 //        List<ProdutoDtoOutput> listaLambda = buscarTodosDeAcordoComIdadePessoa(pessoa)
 //                .stream()
 //                .map(p -> new ProdutoDtoOutput(p, pessoa))
 //                .filter(p -> p.getDescricao().equals(descricao))
-//                .filter(p -> p.getPrecoVenda().compareTo(precoMinimo) >=0)
-//                .filter(p -> p.getPrecoVenda().compareTo(precoMaximo) <=0)
+//                .filter(p -> p.getPrecoVenda().compareTo(precoMinimo) >= 0)
+//                .filter(p -> p.getPrecoVenda().compareTo(precoMaximo) <= 0)
 //                .collect(Collectors.toList());
 //        return listaLambda;
-        return ProdutoDtoOutput.listFromProduto(buscarTodosDeAcordoComIdadePessoa(pessoa), pessoa);
+//    }
+
+    public List<ProdutoDtoOutput> buscarTodosLambda(String descricao, BigDecimal precoMinimo, BigDecimal precoMaximo, Pessoa pessoa) {
+        List<ProdutoDtoOutput> listaLambda = buscarTodosDeAcordoComIdadePessoa(pessoa)
+                .stream()
+                .map(p -> new ProdutoDtoOutput(p, pessoa))
+                .filter(p -> p.getPrecoVenda().compareTo(precoMinimo) >= 0)
+                .filter(p -> p.getPrecoVenda().compareTo(precoMaximo) <= 0)
+                .collect(Collectors.toList());
+        return listaLambda;
     }
 
     public Produto buscarPorId(Long id, Pessoa pessoa) {
