@@ -83,6 +83,9 @@ public class PedidoService {
     public Pedido cancelar(Long id, String login, String senha) {
         autenticacaoService.validarUsuarioAdministrador(login, senha);
         Pedido pedido = buscarPorId(id);
+        if(pedido.getStatus().equals(EStatusPedido.CANCELADO)){
+            throw new RuntimeException("Pedido já se encontra cancelado");
+        }
         List<ItemPedido> listItemPedido = pedido.getItemPedidoList();
         List<Produto> listProdutoAtualizar = new ArrayList<>();
         listItemPedido.forEach(itemPedido -> {
